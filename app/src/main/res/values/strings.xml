@@ -1,0 +1,21 @@
+<resources>
+    <string name="app_name">ApplicationA</string>
+    <string name="application_b_package">com.example.andrey.applicationb</string>
+    <string name="ok">Ok</string>
+    <string name="test">Test</string>
+    <string name="history">History</string>
+    <string name="history_tab_spec_tag">historyTab</string>
+    <string name="test_tab_spec_tag">testTab</string>
+    <string name="you_dont_have_additional_application_for">You don\'t have additional application for displaying image</string>
+    <string name="enter_image_s_url">Enter image\'s url</string>
+    <string name="image_s_url_example">https://www.healthypawspetinsurance.com/Images/V3/DogAndPuppyInsurance/Dog_CTA_Desktop_HeroImage.jpg</string>
+    <string name="url_extra">url_extra</string>
+    <string name="databse_name">database_references</string>
+    <string name="sort_by_date">Sort by date</string>
+    <string name="sort_by_status">Sort by status</string>
+    <string name="menu">Menu</string>
+    <string name="receiver_action">com.broadcast.action</string>
+    <string name="last_opened_extra">last_opened_extra</string>
+    <string name="status_extra">status_extra</string>
+    <string name="loading">Loading...</string>
+</resources>
