@@ -145,7 +145,6 @@ public class MainFragment extends MvpAppCompatFragment implements MainView,
                     ((MainActivity)getActivity()).setMenuVisible(false);
                 else {
                     ((MainActivity) getActivity()).setMenuVisible(true);
-                   //mainPresenter.
                 }
             }
         });
@@ -163,12 +162,6 @@ public class MainFragment extends MvpAppCompatFragment implements MainView,
         unbinder.unbind();
         mainPresenter.clear();
         super.onDestroy();
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-        Log.d(TAG, "onStop");
     }
 
     @OnClick(R.id.buttonOk)

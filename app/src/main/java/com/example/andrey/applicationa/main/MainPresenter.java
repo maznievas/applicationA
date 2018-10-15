@@ -44,54 +44,6 @@ public class MainPresenter extends MvpPresenter<MainView> {
         showReferencesList();
     }
 
-    public void testDataBase() {
-        List<ReferenceData> list = new ArrayList<>();
-        for (int i = 0; i < 5; i++) {
-            ReferenceData referenceData = new ReferenceData();
-            referenceData.setUrl(String.valueOf("Url" + i));
-            referenceData.setStatus(i);
-            referenceData.setLastOpened(Calendar.getInstance().getTime());
-
-            list.add(referenceData);
-        }
-        compositeDisposable.add(
-//                Flowable.fromIterable(list)
-//                .flatMapCompletable(referenceData ->
-//                        Completable.fromAction(() -> {
-//                            referenceDataDao.insert(referenceData);
-//                    })
-//                                .doOnComplete(() -> Log.d(TAG, "Inserting complete"))
-//                        .doOnError(c -> {
-//                            Log.d(TAG, "Insert onErrorlll");
-//                        })
-//                )
-//                        .andThen(getAllReferences())
-//                .toFlowable()
-//                .flatMap(__ -> {
-//                    return getAllReferences();
-//                })
-                getAllReferences()
-//                .flatMapIterable(allReferences -> allReferences)
-//                .flatMapCompletable(referenceData ->
-//                    Completable.fromAction(() -> {
-//                      referenceDataDao.delete(referenceData);
-//                    })
-//                )
-//                .toFlowable()
-//                .flatMap(__ -> {
-//                    return getAllReferences();
-//                })
-                        .subscribeOn(Schedulers.io())
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe(allRefs -> {
-                            getViewState().updateReferencesList(allRefs);
-                        }, throwable -> {
-                            Log.d(TAG, "database error");
-                            throwable.printStackTrace();
-                        })
-        );
-    }
-
     public void saveReference(ReferenceData referenceData) {
         compositeDisposable.add(
                 Completable.fromAction(() -> {
@@ -145,26 +97,5 @@ public class MainPresenter extends MvpPresenter<MainView> {
 
     public void clear() {
         compositeDisposable.clear();
-    }
-
-    public void deleteReference(ReferenceData referenceData) {
-        compositeDisposable.add(
-                Observable.timer(15, TimeUnit.SECONDS)
-                        .flatMapCompletable(__ -> Completable.fromAction(() -> {
-                            referenceDataDao.delete(referenceData);
-                        }))
-                        .andThen(getAllReferences())
-                        .subscribeOn(Schedulers.io())
-                        .observeOn(AndroidSchedulers.mainThread())
-//                        .doOnSubscribe(c -> getViewState().showLoadingState(true))
-//                        .doAfterTerminate(() -> getViewState().showLoadingState(false))
-                        .subscribe(referenceDataList -> {
-                            Log.d("mLog", "Deleted");
-                            getViewState().setReferencesList(referenceDataList);
-                        }, throwable -> {
-                            Log.e(TAG, "deleting reference from database");
-                            throwable.printStackTrace();
-                        })
-        );
     }
 }

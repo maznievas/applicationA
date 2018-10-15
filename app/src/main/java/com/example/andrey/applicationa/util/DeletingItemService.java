@@ -48,7 +48,6 @@ public class DeletingItemService extends Service {
     }
 
     void deleteItemFromDatabase(String imageUrl, int startId) {
-   //     Log.d(TAG, "Delete method called before delay");
         Observable.timer(15, TimeUnit.SECONDS)
                 .map(__ -> {
                     return new ReferenceData();
@@ -72,46 +71,11 @@ public class DeletingItemService extends Service {
                     Log.e(TAG, "deleting reference from database");
                     throwable.printStackTrace();
                 });
- //       MyRun mr = new MyRun(startId, imageUrl);
- //       es.execute(mr);
     }
 
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
         return null;
-    }
-
-    class MyRun implements Runnable {
-
-//        int time;
-        int startId;
-        String imageUrl;
-
-        public MyRun(int startId, String imageUrl ){
-//            this.time = time;
-            this.startId = startId;
-            this.imageUrl = imageUrl;
-//            Log.d(TAG, "MyRun#" + startId + " create");
-        }
-
-        public void run() {
-           try {
-               Log.d(TAG, "before sleep");
-                TimeUnit.SECONDS.sleep(5);
-               // ReferenceData referenceData = new ReferenceData();
-               // referenceData.setUrl(imageUrl);
-               // referenceDataDao.delete(referenceData);
-                Log.d(TAG, "after sleep");
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-            stop();
-        }
-
-        void stop() {
-          //  Log.d(LOG_TAG, "MyRun#" + startId + " end, stopSelf(" + startId + ")");
-            stopSelf(startId);
-        }
     }
 }
