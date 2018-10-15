@@ -14,12 +14,14 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import io.reactivex.BackpressureStrategy;
 import io.reactivex.Completable;
 import io.reactivex.Flowable;
 import io.reactivex.FlowableEmitter;
 import io.reactivex.FlowableOnSubscribe;
+import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.schedulers.Schedulers;
@@ -143,5 +145,26 @@ public class MainPresenter extends MvpPresenter<MainView> {
 
     public void clear() {
         compositeDisposable.clear();
+    }
+
+    public void deleteReference(ReferenceData referenceData) {
+        compositeDisposable.add(
+                Observable.timer(15, TimeUnit.SECONDS)
+                        .flatMapCompletable(__ -> Completable.fromAction(() -> {
+                            referenceDataDao.delete(referenceData);
+                        }))
+                        .andThen(getAllReferences())
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+//                        .doOnSubscribe(c -> getViewState().showLoadingState(true))
+//                        .doAfterTerminate(() -> getViewState().showLoadingState(false))
+                        .subscribe(referenceDataList -> {
+                            Log.d("mLog", "Deleted");
+                            getViewState().setReferencesList(referenceDataList);
+                        }, throwable -> {
+                            Log.e(TAG, "deleting reference from database");
+                            throwable.printStackTrace();
+                        })
+        );
     }
 }

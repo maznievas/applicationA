@@ -23,6 +23,7 @@ import com.arellomobile.mvp.presenter.InjectPresenter;
 import com.example.andrey.applicationa.Const;
 import com.example.andrey.applicationa.R;
 import com.example.andrey.applicationa.database.ReferenceData;
+import com.example.andrey.applicationa.util.DeletingItemService;
 import com.example.andrey.applicationa.util.ItemSelectedListener;
 import com.example.andrey.applicationa.util.ListItemDecoration;
 import com.example.andrey.applicationa.util.adapters.RecyclerViewAdapter;
@@ -42,6 +43,8 @@ public class MainFragment extends MvpAppCompatFragment implements MainView,
     private RecyclerViewAdapter recyclerViewAdapter;
     private final String TAG = "mLog";
     private ProgressDialog progressDialog;
+    private String urlExtra;
+
 
     @InjectPresenter
     MainPresenter mainPresenter;
@@ -54,6 +57,17 @@ public class MainFragment extends MvpAppCompatFragment implements MainView,
 
     @BindView(R.id.recyclerView)
     RecyclerView recyclerView;
+
+    private BroadcastReceiver deleteComppleteReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (intent.getAction().equals(getString(R.string.receiver_delete_complete))) {
+                Log.d(TAG, "update view here");
+                getContext().unregisterReceiver(deleteComppleteReceiver);
+                mainPresenter.showReferencesList();
+            }
+        }
+    };
 
     private BroadcastReceiver mReceiver = new BroadcastReceiver() {
         @Override
@@ -73,6 +87,20 @@ public class MainFragment extends MvpAppCompatFragment implements MainView,
                 referenceData.setLastOpened(new Date(lastOpenedExtra));
 
                 mainPresenter.saveReference(referenceData);
+            }
+            else if(intent.getAction().equals(getString(R.string.receiver_action_delete))){
+                urlExtra = intent.getStringExtra(getString(R.string.url_extra));
+
+                getContext().unregisterReceiver(mReceiver);
+
+                Intent deletingServiceIntent = new Intent(getContext(), DeletingItemService.class);
+                deletingServiceIntent.putExtra(getString(R.string.url_extra), urlExtra);
+                Log.d(TAG, "URL_EXTRA "+ urlExtra);
+
+                IntentFilter intentFilter = new IntentFilter(getString(R.string.receiver_delete_complete));
+                getContext().registerReceiver(deleteComppleteReceiver, intentFilter);
+
+                getContext().startService(deletingServiceIntent);
             }
         }
     };
@@ -136,6 +164,12 @@ public class MainFragment extends MvpAppCompatFragment implements MainView,
         super.onDestroy();
     }
 
+    @Override
+    public void onStop() {
+        super.onStop();
+        Log.d(TAG, "onStop");
+    }
+
     @OnClick(R.id.buttonOk)
     public void onOkButtonClicked(){
         Intent launchIntent = getContext().getPackageManager().getLaunchIntentForPackage(getString(R.string.application_b_package));
@@ -159,7 +193,16 @@ public class MainFragment extends MvpAppCompatFragment implements MainView,
 
     @Override
     public void selectedReference(ReferenceData referenceData) {
-
+        Intent launchIntent = getContext().getPackageManager().getLaunchIntentForPackage(getString(R.string.application_b_package));
+        if (launchIntent != null) {
+            getContext().registerReceiver(mReceiver, new IntentFilter(getString(R.string.receiver_action_delete)));
+            launchIntent.putExtra(getString(R.string.url_extra), referenceData.getUrl());
+            launchIntent.putExtra(getString(R.string.status_extra), referenceData.getStatus());
+            launchIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(launchIntent);
+        }
+        else
+            showMessage(R.string.you_dont_have_additional_application_for);
     }
 
     @Override

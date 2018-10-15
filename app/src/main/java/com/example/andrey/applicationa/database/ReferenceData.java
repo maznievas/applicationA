@@ -8,7 +8,7 @@ import java.util.Date;
 
 
 @Entity(tableName = "reference_data")
-public class ReferenceData {
+public class ReferenceData implements Comparable<ReferenceData>{
 
     @NonNull
     @PrimaryKey
@@ -38,5 +38,10 @@ public class ReferenceData {
 
     public void setLastOpened(Date lastOpened) {
         this.lastOpened = lastOpened;
+    }
+
+    @Override
+    public int compareTo(@NonNull ReferenceData o) {
+        return this.status - o.getStatus();
     }
 }

@@ -45,7 +45,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
 
         holder.dateTextView.setText(sdf.format(referenceData.getLastOpened()));
         holder.urlTextView.setText(referenceData.getUrl());
-        switch (referenceData.getStatus()){
+        switch (referenceData.getStatus()) {
             case 1:
                 holder.itemParentLayout.setBackgroundResource(R.color.colorGreen);
                 break;
@@ -55,9 +55,9 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
             case 3:
                 holder.itemParentLayout.setBackgroundResource(R.color.colorGrey);
                 break;
-                default:
-                    holder.itemParentLayout.setBackgroundResource(R.color.colorGrey);
-                    break;
+            default:
+                holder.itemParentLayout.setBackgroundResource(R.color.colorGrey);
+                break;
         }
 
         holder.itemParentLayout.setOnClickListener(listener -> {
@@ -67,34 +67,33 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
 
     @Override
     public int getItemCount() {
-        if(referencesList != null)
+        if (referencesList != null)
             return referencesList.size();
         else
             return 0;
     }
 
-    public void updateReferencesList(List<ReferenceData> referencesList){
+    public void updateReferencesList(List<ReferenceData> referencesList) {
         this.referencesList.addAll(referencesList);
         notifyDataSetChanged();
     }
 
-    public void setReferencesList(List<ReferenceData> referenceDataList){
+    public void setReferencesList(List<ReferenceData> referenceDataList) {
         this.referencesList = referenceDataList;
         notifyDataSetChanged();
     }
 
-    public void setItemSelectedListener(ItemSelectedListener itemSelectedListener)
-    {
+    public void setItemSelectedListener(ItemSelectedListener itemSelectedListener) {
         this.itemSelectedListener = itemSelectedListener;
     }
 
-    public void sortByDate(){
+    public void sortByDate() {
         Collections.sort(referencesList, new Comparator<ReferenceData>() {
             @Override
             public int compare(ReferenceData o1, ReferenceData o2) {
                 Date firstDate = o1.getLastOpened();
                 Date secondDate = o2.getLastOpened();
-                if(firstDate.getTime() > secondDate.getTime())
+                if (firstDate.getTime() > secondDate.getTime())
                     return -1;
                 else
                     return 1;
@@ -103,20 +102,8 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         notifyDataSetChanged();
     }
 
-    public void sortByStatus(){
-        Collections.sort(referencesList, new Comparator<ReferenceData>() {
-            @Override
-            public int compare(ReferenceData o1, ReferenceData o2) {
-                int statusFirst = o1.getStatus();
-                int statusSecond = o1.getStatus();
-                if(statusFirst > statusSecond)
-                    return 1;
-                else if(statusFirst == statusSecond)
-                    return 0;
-                else
-                    return -1;
-            }
-        });
+    public void sortByStatus() {
+        Collections.sort(referencesList);
         notifyDataSetChanged();
     }
 
