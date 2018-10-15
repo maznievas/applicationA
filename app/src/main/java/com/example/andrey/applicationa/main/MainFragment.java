@@ -11,6 +11,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -172,15 +173,18 @@ public class MainFragment extends MvpAppCompatFragment implements MainView,
 
     @OnClick(R.id.buttonOk)
     public void onOkButtonClicked(){
-        Intent launchIntent = getContext().getPackageManager().getLaunchIntentForPackage(getString(R.string.application_b_package));
-        if (launchIntent != null) {
-            getContext().registerReceiver(mReceiver, new IntentFilter(getString(R.string.receiver_action)));
-            launchIntent.putExtra(getString(R.string.url_extra), editText.getText().toString());
-            launchIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-            startActivity(launchIntent);
+        if(!TextUtils.isEmpty(editText.getText().toString())) {
+            Intent launchIntent = getContext().getPackageManager().getLaunchIntentForPackage(getString(R.string.application_b_package));
+            if (launchIntent != null) {
+                getContext().registerReceiver(mReceiver, new IntentFilter(getString(R.string.receiver_action)));
+                launchIntent.putExtra(getString(R.string.url_extra), editText.getText().toString());
+                launchIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(launchIntent);
+            } else
+                showMessage(R.string.you_dont_have_additional_application_for);
         }
         else
-            showMessage(R.string.you_dont_have_additional_application_for);
+            showMessage(R.string.url_field_can_not_be_empty);
     }
 
     public void showMessage(int resourceId){
